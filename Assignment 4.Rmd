@@ -1,0 +1,155 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+``
+
+``
+```{r echo=TRUE} 
+#qustion 2
+diploid_selection <- function(p0 = 1, WAA = 1, WAa = 0.9, Waa=0.3, n = 100) {
+    p <- rep(NA,n)  
+    
+    functionw <- rep(NA, n)
+     
+    # starting conditions
+   	p[1] <- p0 # starting allele frequencies
+   	q <- 1-p[1]
+   	part1 <- (p[1]^2)*WAA
+   	part2 <- 2*p[1]*q*WAa
+   	part3 <- (q^2)*WAA
+   	
+	  functionw[1] <- part1 + part2 + part3
+	 
+	  for (i in 2:n ){
+	   
+	    q <- 1-p[i - 1]
+	    part1 <- (p[i - 1]^2)*WAA
+	    part2 <- 2*p[i - 1]*q*WAa
+	    part3 <- (q^2)*WAA
+	    
+	 
+	    
+		  functionw[i - 1] <- part1+part2+part3 # mean population fitness
+		  p[i] <- (p[i-1]^2 * (Waa/functionw[i-1])) + (p[i-1] * q * (WAa/functionw[i-1]))
+
+	  }
+    
+    return(p)
+}
+
+p <- diploid_selection()
+generations <- 1:length(p)
+plot(p ~ generations, pch = 20, 
+     ylab = "allele frequency", 
+     xlab = "generation")
+
+
+#still have to add graph
+```
+```{r}
+
+#You can alter the number of alleles in the first command, for this example, i have set it to 100 
+#loop it for geneerations 
+
+question3 <- function(generations = 100, a=100){
+  
+  # Initilize Variable
+  allele_f1 <- rep(NA, generations)
+  size <- a
+  
+  # Intilize first element
+  allele <- sample(c("s", "S"), size= a, replace = TRUE, prob= c(0.5, 0.5))         
+  allele_f1 <- table(allele)/length(allele)
+
+  print(allele_f1)
+  
+  #the loop allows one to do this for multiple generations
+  
+  for ( i in 2:generations) {
+    allele <- sample(c("s", "S"), size=a, replace = TRUE, prob = allele_f1[i - 1])
+    
+    allele_f1[i] <- table(allele)/length(allele)
+  }
+  
+  return(allele)
+  
+  
+  
+}
+p <- allele
+generations <- 1:length(p)
+plot(p ~ generations, pch = 20, 
+     ylim = c(0, 20)
+     ylab = "allele frequency", 
+     xlab = "generation")
+
+
+
+
+```
+
+```{r}
+#6a&c
+x <- seq(from =1, to = 10, length.out = 20) # length.out is how many observations we will have
+a <- 0.5 # intercept
+b <- 0.1 # slope
+y_deterministic <- a + b*x
+
+
+question6 <- function(intercept = 0.5, slope = 0.1, observations = 20){
+  x <- seq(from =1, to = 10, length.out = observations)
+  y_deterministic <- intercept + slope*x
+  y_simulated <- rnorm(length(x), mean = y_deterministic, sd = 2)
+
+  mod_sim <- lm(y_simulated ~ x)
+  p_val_slope <- summary(mod_sim)$coef[2,4] # extracts the p-value
+  return(p_val_slope)
+}
+
+result <- rep(NA, 1000)
+for (i in 1:1000){
+  result[i] <- question6()
+}
+
+hist(result)
+
+
+```
+
+```{r}
+#6b
+#6
+x <- seq(from =1, to = 10, length.out = 20) # length.out is how many observations we will have
+a <- 0 # intercept
+b <- 0.1 # slope
+y_deterministic <- a + b*x
+
+
+question6 <- function(intercept = 0.5, slope = 0.1, observations = 20){
+  x <- seq(from =1, to = 10, length.out = observations)
+  y_deterministic <- intercept + slope*x
+  y_simulated <- rnorm(length(x), mean = y_deterministic, sd = 2)
+
+  mod_sim <- lm(y_simulated ~ x)
+  p_val_slope <- summary(mod_sim)$coef[2,4] # extracts the p-value
+  return(p_val_slope)
+}
+
+result <- rep(NA, 1000)
+for (i in 1:1000){
+  result[i] <- question6()
+}
+
+hist(result)
+```
+
+```
+
+
+
